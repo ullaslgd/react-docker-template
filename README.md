@@ -1,16 +1,118 @@
-# React + Vite
+# React + Vite Docker Template
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A beginner-friendly example showing how to containerize a React application built with **Vite** and run it using Docker.
+This project uses a simple multi-stage Dockerfile and Vite’s built-in preview server inside the container.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## React Compiler
+* ⚛️ React + Vite setup
+* 🐳 Fully containerized with Docker
+* 🏗️ Multi-stage Docker build
+* 🔥 Uses `vite preview` in production mode (no Nginx required)
+* 📦 Small and fast production image
+* 👶 Beginner-friendly and easy to follow
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 📁 Project Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+react-docker-template/
+│── src/
+│── public/
+│── Dockerfile
+│── .dockerignore
+│── package.json
+│── vite.config.js
+└── README.md
+```
+
+---
+
+## 🐳 Docker Setup
+
+### 1️⃣ Build the Docker image
+
+Run this inside the project folder:
+
+```bash
+docker build -t react-docker-template .
+```
+
+### 2️⃣ Run the container
+
+```bash
+docker run -d -p 8080:4173 react-docker-template
+```
+
+Vite’s preview server runs on port **4173**, so we map it to **8080** on your system.
+
+Now open:
+
+👉 **[http://localhost:8080](http://localhost:8080)**
+
+---
+
+## 🧱 Dockerfile (for reference)
+
+```dockerfile
+# Build stage
+FROM node:20-alpine AS build
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npm run build
+
+# Production stage
+FROM node:20-alpine AS prod
+WORKDIR /app
+
+COPY --from=build /app ./
+
+EXPOSE 4173
+
+CMD [ "npm", "run", "preview" ]
+```
+
+---
+
+## 🧪 Run Locally (Without Docker)
+
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## 📦 Production Build
+
+```bash
+npm run build
+npm run preview
+```
+
+---
+
+## 🛠️ Customize Vite Preview Port
+
+If you want to change the port from **4173**, edit your `vite.config.js`:
+
+```js
+export default defineConfig({
+  preview: {
+    port: 4173, // change this if needed
+  },
+});
+```
+
+---
+
+
+If you want, I can include screenshots, a project banner, or add step-by-step Docker explanation inside the README.
+
